@@ -47,9 +47,9 @@ CREATE USER `myturtle`@`%` IDENTIFIED BY 'passwd';
 GRANT Select ON `mysql`.* TO `myturtle`@`%`;
 ```
 
-如果是docker直接使用项目中的docker-compose.yml文件
+如果是docker直接使用项目中的`docker-compose.yml`文件
 
-如果是k8s直接使用项目中的deployment.yaml文件
+如果是k8s直接使用项目中的`deployment.yaml`文件
 
 最主要就是修改里面的环境变量
 
