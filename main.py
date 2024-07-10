@@ -3,6 +3,7 @@ import os
 from channel.feishu import FeishuChannel
 from apscheduler.schedulers.background import BackgroundScheduler
 import time
+from logger import logger
 
 
 # Define a class to represent a slow log entry
@@ -36,11 +37,10 @@ def fetch_slow_log():
             cursor.execute(sql, (time_range, query_time))
             results = cursor.fetchall()
             for row in results:
-                print(row)
                 log_entry = SlowLog(*row)
                 slow_logs.append(log_entry)
     except Exception as e:
-        print(f"Error fetching slow logs: {e}")
+        logger.error(f"Error fetching slow logs: {e}")
     finally:
         connection.close()
     return slow_logs
@@ -49,11 +49,10 @@ def fetch_slow_log():
 def slow_job():
     slow_logs = fetch_slow_log()
     if len(slow_logs) == 0:
-        print("No slow logs found")
+        logger.info("No slow logs found")
     else:
         channel = FeishuChannel()
         for slow_log in slow_logs:
-            print(slow_log.lock_time)
             channel.send_msg(slow_log)
 
 
@@ -63,7 +62,7 @@ if __name__ == '__main__':
     scheduler = BackgroundScheduler()
     scheduler.add_job(slow_job, 'interval', seconds=int(time_range))
     scheduler.start()
-    print('Press Ctrl+{0} to exit'.format('Break' if os.name == 'nt' else 'C'))
+    logger.info('Press Ctrl+{0} to exit'.format('Break' if os.name == 'nt' else 'C'))
     try:
         while True:
             time.sleep(2)
