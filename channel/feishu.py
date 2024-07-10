@@ -6,7 +6,7 @@ import time
 import os
 
 
-def format_message_with_emojis(slow_log):
+def format_message(slow_log):
     line = (f"🕒 开始时间: {slow_log.start_time}\n"
             f"🧑‍💻 用户主机: {slow_log.user_host}\n"
             f"🔍 查询时间: {slow_log.query_time}\n"
@@ -23,8 +23,8 @@ class FeishuChannel:
         self.bot_url = os.getenv("FEISHU_BOT_URL", "https://open.feishu.cn/open-apis/bot/v2/hook/")
         self.sign = os.getenv("FEISHU_SIGN", "your_sign")
 
-    def send_msg(self, slow_logs):
-        message = format_message_with_emojis(slow_logs)
+    def send_msg(self, slow_log):
+        msg = format_message(slow_log)
         timestamp = int(time.time())
         # 拼接timestamp和secret
         string_to_sign = '{}\n{}'.format(timestamp, self.sign)
@@ -40,7 +40,7 @@ class FeishuChannel:
                 "elements": [
                     {
                         "tag": "markdown",
-                        "content": message
+                        "content": msg
                     },
                     {
                         "tag": "hr"

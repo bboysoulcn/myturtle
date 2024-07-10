@@ -1,6 +1,8 @@
 import pymysql
 import os
 from channel.feishu import FeishuChannel
+from channel.dingding import DingdingChannel
+from channel.wechat import WechatChannel
 from apscheduler.schedulers.background import BackgroundScheduler
 import time
 from logger import logger
@@ -29,7 +31,9 @@ def fetch_slow_log():
     connection = pymysql.connect(
         host=os.getenv('DB_HOST', '127.0.0.1'),
         user=os.getenv('DB_USER', 'root'),
-        password=os.getenv('DB_PASSWORD', 'passwd'))
+        password=os.getenv('DB_PASSWORD', 'passwd'),
+        port=int(os.getenv('DB_PORT', '3306')),
+    )
     slow_logs = []
     try:
         with connection.cursor() as cursor:
@@ -48,12 +52,21 @@ def fetch_slow_log():
 
 def slow_job():
     slow_logs = fetch_slow_log()
+    channel_input = os.getenv('CHANNEL', 'feishu')
     if len(slow_logs) == 0:
         logger.info("No slow logs found")
     else:
-        channel = FeishuChannel()
+        if channel_input == 'feishu':
+            channel = FeishuChannel()
+        elif channel_input == 'dingding':
+            channel = DingdingChannel()
+        elif channel_input == 'wechat':
+            channel = WechatChannel()
+        else:
+            print(f"Unsupported channel: {channel_input}")
         for slow_log in slow_logs:
             channel.send_msg(slow_log)
+            logger.info(f"Sent slow log to {channel_input}")
 
 
 if __name__ == '__main__':
