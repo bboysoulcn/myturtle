@@ -1,10 +1,8 @@
 import pymysql
 import os
 from channel.feishu import FeishuChannel
-from datetime import datetime
-
-time_range = os.getenv('TIME_RANGE', '60')
-query_time = os.getenv('QUERY_TIME', '1')
+from apscheduler.schedulers.background import BackgroundScheduler
+import time
 
 
 # Define a class to represent a slow log entry
@@ -14,7 +12,7 @@ class SlowLog:
         self.start_time = start_time.strftime("%Y-%m-%d %H:%M:%S")
         self.user_host = user_host
         self.query_time = float(query_time.total_seconds())
-        self.lock_time = float(lock_time.total_seconds())
+        self.lock_time = int(lock_time.total_seconds())
         self.rows_sent = rows_sent
         self.rows_examined = rows_examined
         self.db = db
@@ -47,7 +45,8 @@ def fetch_slow_log():
         connection.close()
     return slow_logs
 
-if __name__ == '__main__':
+
+def slow_job():
     slow_logs = fetch_slow_log()
     if len(slow_logs) == 0:
         print("No slow logs found")
@@ -57,3 +56,16 @@ if __name__ == '__main__':
             print(slow_log.lock_time)
             channel.send_msg(slow_log)
 
+
+if __name__ == '__main__':
+    time_range = os.getenv('TIME_RANGE', '60')
+    query_time = os.getenv('QUERY_TIME', '1')
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(slow_job, 'interval', seconds=int(time_range))
+    scheduler.start()
+    print('Press Ctrl+{0} to exit'.format('Break' if os.name == 'nt' else 'C'))
+    try:
+        while True:
+            time.sleep(2)
+    except (KeyboardInterrupt, SystemExit):
+        scheduler.shutdown()

@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myturtle
+  namespace: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: myturtle
+  template:
+    metadata:
+      labels:
+        app: myturtle
+    spec:
+      containers:
+      - name: myturtle
+        image: ghcr.io/bboysoulcn/myturtle:0.0.1
+        imagePullPolicy: Always
+        env:
+        - name: DB_HOST
+          value: DB_HOST
+        - name: DB_PASSWORD
+          value: DB_PASSWORD
+        - name: DB_USER
+          value: DB_USER
+        - name: FEISHU_BOT_URL
+          value: FEISHU_BOT_URL
+        - name: FEISHU_SIGN
+          value: FEISHU_SIGN
+        - name: QUERY_TIME
+          value: QUERY_TIME
+        - name: TIME_RANGE
+          value: TIME_RANGE
+        volumeMounts:
+        - name: localtime
+          mountPath: /etc/localtime
+      volumes:
+      - name: localtime
+        hostPath:
+          path: /etc/localtime
