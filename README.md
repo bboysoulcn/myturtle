@@ -11,11 +11,16 @@ myturtle 是一个发送mysql慢查询日志到各个IM的工具
 因为你的mysql慢的和乌龟一样，所以就叫myturtle
 
 ### 效果
-wechat 
+- wechat 
+
 ![wechat](./img/wechat.webp)
-dingding
+
+- dingding
+
 ![dingding](./img/dingding.webp)
-feishu
+
+- feishu
+
 ![feishu](./img/feishu.webp)
 
 ### 目前支持的IM
