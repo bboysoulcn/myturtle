@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "myturtle"
+version = "0.1.0"
+description = ""
+authors = ["bboysoul <bboysoulcn@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+httpx = "^0.27.0"
+pymysql = "^1.1.1"
+cryptography = "^42.0.8"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
