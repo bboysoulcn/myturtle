@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  myturtle:
+    image: ghcr.io/bboysoulcn/myturtle:0.0.1
+    container_name: myturtle
+    restart: always
+    environment:
+      DB_HOST: DB_HOST
+      DB_PASSWORD: DB_PASSWORD
+      DB_USER: DB_USER
+      FEISHU_BOT_URL: FEISHU_BOT_URL
+      FEISHU_SIGN: FEISHU_SIGN
+      QUERY_TIME: QUERY_TIME
+      TIME_RANGE: TIME_RANGE
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
